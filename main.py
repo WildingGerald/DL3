@@ -13,8 +13,8 @@ class Process:
         self.turnaround_time = None
         self.burst_time = burst_time
         self.priority = priority
-        self.process_id = main.Process.process_id_counter
-        main.Process.process_id_counter += 1
+        self.process_id = Process.process_id_counter
+        Process.process_id_counter += 1
 
     def set_waiting_time(self, waiting_time):
         self.waiting_time = waiting_time
@@ -70,8 +70,9 @@ class FirstComeFirstServe(Algorithm):
 
     def sort(self, que: List):
         # firstComeFirstServe doesn't require additional sorting
-        for x in que:
-            print(repr(x))
+        # for x in que:
+        #     print(repr(x))
+        pass
 
 
 class ShortestJobFirst(Algorithm):
@@ -80,8 +81,8 @@ class ShortestJobFirst(Algorithm):
 
     def sort(self, que: List):
         que.sort(reverse=False, key=lambda process: process.burst_time)
-        for x in que:
-            print(repr(x))
+        # for x in que:
+        #     print(repr(x))
 
 
 class PriorityScheduling(Algorithm):
@@ -90,8 +91,8 @@ class PriorityScheduling(Algorithm):
 
     def sort(self, que: List):
         que.sort(reverse=False, key=lambda process: process.priority)
-        for x in que:
-            print(repr(x))
+        # for x in que:
+        #     print(repr(x))
 
 
 def test_algorithm(alg: Algorithm, que: List):
