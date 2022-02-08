@@ -2,19 +2,28 @@ import string
 from abc import ABC, abstractmethod
 from typing import List
 
+import main
+
 
 class Process:
+    process_id_counter = 1
+
     def __init__(self, burst_time: int, priority: int = 0):
         self.waiting_time = None
         self.turnaround_time = None
         self.burst_time = burst_time
         self.priority = priority
+        self.process_id = main.Process.process_id_counter
+        main.Process.process_id_counter += 1
 
     def set_waiting_time(self, waiting_time):
         self.waiting_time = waiting_time
 
     def set_turnaround_time(self, turnaround_time):
         self.turnaround_time = turnaround_time
+
+    def __repr__(self):
+        return f"Process Id: {self.process_id}"
 
 
 class Algorithm(ABC):
@@ -31,7 +40,12 @@ class Algorithm(ABC):
             if i == 0:
                 que[i].set_waiting_time(0)
                 que[i].set_turnaround_time(que[i].burst_time)
+                self.total_waiting_time = que[i].burst_time
                 self.total_turnaround_time = que[i].burst_time
+            elif i == len(que)-1:
+                que[i].set_waiting_time(que[i - 1].waiting_time + que[i].burst_time)
+                que[i].set_turnaround_time(que[i].waiting_time + que[i].burst_time)
+                self.total_turnaround_time += que[i].burst_time
             else:
                 que[i].set_waiting_time(que[i - 1].waiting_time + que[i].burst_time)
                 self.total_waiting_time += que[i].waiting_time
@@ -56,7 +70,8 @@ class FirstComeFirstServe(Algorithm):
 
     def sort(self, que: List):
         # firstComeFirstServe doesn't require additional sorting
-        pass
+        for x in que:
+            print(repr(x))
 
 
 class ShortestJobFirst(Algorithm):
@@ -64,7 +79,9 @@ class ShortestJobFirst(Algorithm):
         super(ShortestJobFirst, self).__init__("Shortest Job First")
 
     def sort(self, que: List):
-        pass
+        que.sort(reverse=False, key=lambda process: process.burst_time)
+        for x in que:
+            print(repr(x))
 
 
 class PriorityScheduling(Algorithm):
@@ -72,10 +89,13 @@ class PriorityScheduling(Algorithm):
         super(PriorityScheduling, self).__init__("Priority Scheduling")
 
     def sort(self, que: List):
-        pass
+        que.sort(reverse=False, key=lambda process: process.priority)
+        for x in que:
+            print(repr(x))
 
 
 def test_algorithm(alg: Algorithm, que: List):
+    alg.sort(que)
     alg.calculate_avg(que)
     print(repr(alg))
 
