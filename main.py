@@ -2,8 +2,6 @@ import string
 from abc import ABC, abstractmethod
 from typing import List
 
-import main
-
 
 class Process:
     process_id_counter = 1
@@ -40,17 +38,18 @@ class Algorithm(ABC):
             if i == 0:
                 que[i].set_waiting_time(0)
                 que[i].set_turnaround_time(que[i].burst_time)
-                self.total_waiting_time = que[i].burst_time
+                self.total_waiting_time = que[i].waiting_time
                 self.total_turnaround_time = que[i].burst_time
-            elif i == len(que)-1:
-                que[i].set_waiting_time(que[i - 1].waiting_time + que[i].burst_time)
+            elif i <= len(que)-2:
+                que[i].set_waiting_time(que[i - 1].waiting_time + que[i - 1].burst_time)
                 que[i].set_turnaround_time(que[i].waiting_time + que[i].burst_time)
-                self.total_turnaround_time += que[i].burst_time
+                self.total_waiting_time += que[i].waiting_time
+                self.total_turnaround_time += que[i].turnaround_time
             else:
-                que[i].set_waiting_time(que[i - 1].waiting_time + que[i].burst_time)
+                que[i].set_waiting_time(que[i - 1].waiting_time + que[i - 1].burst_time)
                 self.total_waiting_time += que[i].waiting_time
                 que[i].set_turnaround_time(que[i].waiting_time + que[i].burst_time)
-                self.total_turnaround_time += que[i].burst_time
+                self.total_turnaround_time += que[i].turnaround_time
             self.avg_waiting_time = self.total_waiting_time / len(que)
             self.avg_turnaround_time = self.total_turnaround_time / len(que)
 
@@ -106,11 +105,12 @@ if __name__ == '__main__':
     print("Number of Processes: ", end="")
     number_of_processes = int(input())
     que = []
+
     for i in range(number_of_processes):
         print(f"Burst time for process {i + 1}: ", end="")
         burst_time = int(input())
         print(f"Priority for process {i + 1}: ", end="")
-        que.append(Process(burst_time, (input())))
+        que.append(Process(burst_time, (int(input()))))
     print()
 
     first_come_first_serve = FirstComeFirstServe()
